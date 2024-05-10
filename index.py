@@ -25,7 +25,7 @@ class Wumpus_world():
             list("|       |       |       |       |"),
             ["-" * 66],
             list("|       |       |       |       |"),
-            list("|   >   |   ?   |   ?   |   ?   |"),
+            list("|   →   |   ?   |   ?   |   ?   |"),
             list("|       |       |       |       |"),
             ["-" * 66]
         ]
@@ -131,57 +131,73 @@ class Wumpus_world():
             y_gold = random.choice(self.y_choice)
             
         else:
-            if(self.env_board[x_gold][y_gold] == "?"):
-                self.env_board[x_gold][y_gold] = "G"
-                self.x_choice.remove(x_gold)
-                self.y_choice.remove(y_gold)
+            self.env_board[x_gold-1][y_gold-1] = "G"
+            self.x_choice.remove(x_gold)
+            self.y_choice.remove(y_gold)
         
         return self.env_board
     
     def start(self):
-        game = Wumpus_world()
-        game.default_board()
-        game.set_wumpus()
-        game.set_pit()
-        game.env_hint()
-        game.gold_func()
-        game.player_board()
+        self.set_wumpus()
+        self.set_pit()
+        self.env_hint()
+        self.gold_func()
+        
+        if(self.env_board[self.player_pos_x-1][self.player_pos_y-2] == "B"):
+            self.defboard[self.player_pos_x-1][self.player_pos_y-2] = self.env_board[self.player_pos_x-1][self.player_pos_y-2]
+                
+        if(self.env_board[self.player_pos_x-1][self.player_pos_y-3] == "S"):
+            self.defboard[self.player_pos_x-1][self.player_pos_y-3] = self.env_board[self.player_pos_x-1][self.player_pos_y-3]
+        
+        self.default_board()
+        
         while not self.game_over:
+            
             print("'l' for left, 'r' for right, 'u' for up, 'd' for down, 'g' for grab")
             print("Enter your move: ")
             self.player_move = input()
             if(self.player_move == "l"):
-                self.env_board[self.player_pos_x][self.player_pos_y] = "←"
+                self.defboard[self.player_pos_x][self.player_pos_y] = "←"
             if(self.player_move == "r"):
-                self.env_board[self.player_pos_x][self.player_pos_y] = "→"
+                self.defboard[self.player_pos_x][self.player_pos_y] = "→"
             if(self.player_move == "u"):
-                self.env_board[self.player_pos_x][self.player_pos_y] = "↑"
+                self.defboard[self.player_pos_x][self.player_pos_y] = "↑"
             if(self.player_move == "d"):
-                self.env_board[self.player_pos_x][self.player_pos_y] = "↓"
+                self.defboard[self.player_pos_x][self.player_pos_y] = "↓"
                 
             if(self.player_move == "f"):
                 
-                if(self.env_board[self.player_pos_x][self.player_pos_y] == "←" and self.player_pos_y - 8 >= 0):
-                    self.env_board[self.player_pos_x][self.player_pos_y] = " "
+                if(self.defboard[self.player_pos_x][self.player_pos_y] == "←" and self.player_pos_y - 8 >= 0):
+                    self.defboard[self.player_pos_x][self.player_pos_y] = " "
                     self.player_pos_y -= 8
-                    self.env_board[self.player_pos_x][self.player_pos_y] = "←"
-                    if(self.env_board[self.player_pos_x-1][self.player_pos_y-2] != " "):
-                        return self.env_board[self.player_pos_x-1][self.player_pos_y-2]
+                    self.defboard[self.player_pos_x][self.player_pos_y] = "←"
                     
-                if(self.env_board[self.player_pos_x][self.player_pos_y] == "→" and self.player_pos_y + 8 < len(self.env_board[self.player_pos_x])):
-                    self.env_board[self.player_pos_x][self.player_pos_y] = " "
+                if(self.defboard[self.player_pos_x][self.player_pos_y] == "→" and self.player_pos_y + 8 < len(self.defboard[self.player_pos_x])):
+                    self.defboard[self.player_pos_x][self.player_pos_y] = " "
                     self.player_pos_y += 8
-                    self.env_board[self.player_pos_x][self.player_pos_y] = "→"
-                if(self.env_board[self.player_pos_x][self.player_pos_y] == "↑" and self.player_pos_x - 4 >= 0):
-                    self.env_board[self.player_pos_x][self.player_pos_y] = " "
+                    self.defboard[self.player_pos_x][self.player_pos_y] = "→"
+                    
+                if(self.defboard[self.player_pos_x][self.player_pos_y] == "↑" and self.player_pos_x - 4 >= 0):
+                    self.defboard[self.player_pos_x][self.player_pos_y] = " "
                     self.player_pos_x -= 4
-                    self.env_board[self.player_pos_x][self.player_pos_y] = "↑"
-                if(self.env_board[self.player_pos_x][self.player_pos_y] == "↓" and self.player_pos_x + 4 < len(self.env_board)):
-                    self.env_board[self.player_pos_x][self.player_pos_y] = " "
+                    self.defboard[self.player_pos_x][self.player_pos_y] = "↑"
+                    
+                if(self.defboard[self.player_pos_x][self.player_pos_y] == "↓" and self.player_pos_x + 4 < len(self.defboard)):
+                    self.defboard[self.player_pos_x][self.player_pos_y] = " "
                     self.player_pos_x += 4
-                    self.env_board[self.player_pos_x][self.player_pos_y] = "↓"
+                    self.defboard[self.player_pos_x][self.player_pos_y] = "↓"
+                    
+                if(self.env_board[self.player_pos_x-1][self.player_pos_y-2] == "B"):
+                    self.defboard[self.player_pos_x-1][self.player_pos_y-2] = self.env_board[self.player_pos_x-1][self.player_pos_y-2]
                 
-            game.player_board()
+                if(self.env_board[self.player_pos_x-1][self.player_pos_y-3] == "S"):
+                    self.defboard[self.player_pos_x-1][self.player_pos_y-3] = self.env_board[self.player_pos_x-1][self.player_pos_y-3]
+                
+                if(self.env_board[self.player_pos_x][self.player_pos_y] == "P" or self.env_board[self.player_pos_x][self.player_pos_y] == "W"):
+                    print("You are dead")
+                    self.game_over = True
+                
+            self.default_board()
             
                     
 game = Wumpus_world()
